@@ -1,10 +1,11 @@
 # 9inetales project notes
 
-This project is a Next.js App Router application with TypeScript and plain CSS.
+This project is the independent waitlist application, built with Next.js App Router, TypeScript, and plain CSS. The design-kit project lives separately in `/Users/user/Desktop/9ineTales design`.
 
 - Edit `src/` for application code and `public/assets/` for assets.
-- `legacy/static-prototype/` is reference material, not the active application.
-- Shared design tokens live in `src/styles/tokens.css`.
+- Brand masters and the historical static prototype live in the separate design-kit project.
+- Local design tokens live in `src/styles/tokens.css`. Keep the required assets and tokens local; do not import from or embed the design-kit project.
+- Waitlist copy and launch review references live in `docs/`; browser verification lives in `scripts/verify.mjs`.
 - Keep the demo signup honest: it must not claim to save emails until real collection is implemented.
 - Do not invent launch dates, payment terms, creator work, testimonials, or audience counts.
 - Preserve accessibility labels, visible focus states, reduced-motion support, and responsive layouts.

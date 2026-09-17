@@ -5,7 +5,6 @@ import { mkdir, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const artifacts = join(root, ".artifacts");
-const assets = join(root, "public/assets");
 const baseURL = (process.env.BASE_URL || "http://127.0.0.1:3000").replace(
   /\/$/,
   "",
@@ -25,62 +24,6 @@ try {
 }
 
 async function runChecks(page) {
-  if (process.argv.includes("--export-assets")) {
-    await mkdir(join(assets, "layouts"), { recursive: true });
-    for (const name of [
-      "primary",
-      "primary-ink",
-      "primary-reversed",
-      "horizontal",
-      "horizontal-ink",
-      "horizontal-reversed",
-      "symbol",
-      "symbol-ink",
-      "symbol-reversed",
-    ]) {
-      const dimensions = name.startsWith("primary")
-        ? [1120, 816]
-        : name.startsWith("horizontal")
-          ? [1120, 236]
-          : [512, 512];
-      await page.setViewportSize({
-        width: dimensions[0],
-        height: dimensions[1],
-      });
-      await page.goto(`${baseURL}/assets/logos/${name}.svg`);
-      await page.screenshot({
-        path: join(assets, `logos/${name}.png`),
-        omitBackground: true,
-      });
-    }
-    for (const [name, route, width, height] of [
-      ["mobile-opening", "/", 390, 1000],
-      ["mobile-signup", "/#waitlist", 390, 1100],
-      ["desktop-opening", "/", 1440, 960],
-      ["mobile-brand", "/brand-kit/", 390, 1000],
-    ]) {
-      await page.setViewportSize({ width, height });
-      await page.goto(`${baseURL}${route}`, { waitUntil: "networkidle" });
-      await page.evaluate(() => document.fonts.ready);
-      if (route.includes("#")) {
-        await page
-          .locator("#waitlist")
-          .evaluate((element) =>
-            element.scrollIntoView({ behavior: "instant", block: "start" }),
-          );
-        assert.ok(
-          Math.abs((await page.locator("#waitlist").boundingBox()).y) < 80,
-          "Direct signup link positioning",
-        );
-      }
-      await page.waitForTimeout(300);
-      await page.screenshot({ path: join(assets, `layouts/${name}.png`) });
-    }
-    console.log(
-      "Exported 9 transparent logo PNGs and 4 desktop/mobile layout previews.",
-    );
-    return;
-  }
   const errors = [],
     failed = [],
     external = [],
@@ -100,7 +43,7 @@ async function runChecks(page) {
     }
   });
   const findings = [];
-  for (const route of ["/", "/brand-kit/", "/privacy/"]) {
+  for (const route of ["/", "/privacy/"]) {
     for (const width of [320, 360, 390, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(`${baseURL}${route}`, { waitUntil: "networkidle" });
@@ -124,15 +67,10 @@ async function runChecks(page) {
         });
       }
       if (width === 1440) {
-        if (route === "/brand-kit/") {
-          await page.locator("#mobile").scrollIntoViewIfNeeded();
-          await page.waitForTimeout(600);
-          await page.evaluate(() => scrollTo(0, 0));
-        }
         await page.screenshot({
           path: join(
             artifacts,
-            `screenshots/${route === "/" ? "desktop-waitlist" : route === "/brand-kit/" ? "desktop-brand" : "privacy"}.png`,
+            `screenshots/${route === "/" ? "desktop-waitlist" : "privacy"}.png`,
           ),
           fullPage: true,
         });
@@ -256,7 +194,7 @@ async function runChecks(page) {
     ),
     "auto",
   );
-  for (const route of ["/", "/brand-kit/", "/privacy/"]) {
+  for (const route of ["/", "/privacy/"]) {
     await page.goto(baseURL + route);
     await page.evaluate(() => {
       document.documentElement.style.fontSize = "32px";

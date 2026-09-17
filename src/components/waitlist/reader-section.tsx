@@ -18,8 +18,8 @@ export function ReaderSection() {
           Discover new voices, follow characters you care about, and come back
           for the next chapter.
         </p>
-        <AudienceLink className="text-action" role="reader">
-          Join as a reader <span aria-hidden="true">→</span>
+        <AudienceLink className="button" role="reader">
+          Join as a reader <span aria-hidden="true">↗</span>
         </AudienceLink>
       </div>
       <div className="feature-list">

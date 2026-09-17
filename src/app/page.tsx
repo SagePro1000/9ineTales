@@ -6,18 +6,12 @@ import { ProcessSection } from "@/components/waitlist/process-section";
 import { WaitlistSection } from "@/components/waitlist/waitlist-section";
 import { FaqSection } from "@/components/waitlist/faq-section";
 import { WaitlistProvider } from "@/components/waitlist/waitlist-context";
-import {
-  SiteHeader,
-  SiteFooter,
-  PreviewBar,
-  SkipLink,
-} from "@/components/site-shell";
+import { SiteHeader, SiteFooter, SkipLink } from "@/components/site-shell";
 
 export default function HomePage() {
   return (
     <WaitlistProvider>
       <SkipLink />
-      <PreviewBar />
       <SiteHeader />
       <main id="main">
         <HeroSection />
