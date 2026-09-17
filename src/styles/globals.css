@@ -77,14 +77,6 @@ p {
   gap: 12px;
   margin-bottom: 24px;
 }
-.small-rule {
-  height: 3px;
-  width: 28px;
-  background: var(--orange);
-  display: inline-block;
-  flex-shrink: 0;
-}
-
 .site-header {
   height: 112px;
   display: flex;
@@ -161,7 +153,7 @@ p {
   padding-bottom: 78px;
 }
 .hero h1 {
-  font-size: clamp(4rem, 7.2vw, 7.25rem);
+  font-size: clamp(4rem, 7.2vw, 6rem);
   line-height: 0.94;
   white-space: nowrap;
   margin-bottom: 30px;
@@ -179,6 +171,20 @@ p {
   align-items: center;
   gap: 28px;
   margin-top: 32px;
+}
+.hero-actions svg {
+  flex-shrink: 0;
+}
+.hero .text-action {
+  min-height: 44px;
+}
+.hero .release-note {
+  display: grid;
+  gap: 6px;
+}
+.hero .release-note strong {
+  color: var(--ink);
+  font-weight: 600;
 }
 .release-note {
   font-size: 0.875rem;
@@ -716,11 +722,6 @@ legend {
   max-width: 100%;
 }
 
-@media (min-width: 1600px) {
-  .hero h1 {
-    font-size: 7.25rem;
-  }
-}
 @media (max-width: 1150px) {
   .wrap {
     width: calc(100% - 64px);
@@ -789,12 +790,6 @@ legend {
     font-size: 0.8125rem;
     letter-spacing: 0.04em;
   }
-  .hero .eyebrow {
-    display: block;
-  }
-  .hero .small-rule {
-    display: none;
-  }
   .art-frame {
     height: 470px;
   }
@@ -860,10 +855,6 @@ legend {
   }
   .hero h1 {
     font-size: clamp(3.4rem, 14.3vw, 5.8rem);
-    margin-bottom: 24px;
-  }
-  .hero .eyebrow {
-    font-size: 0.8125rem;
     margin-bottom: 24px;
   }
   .hero-description {

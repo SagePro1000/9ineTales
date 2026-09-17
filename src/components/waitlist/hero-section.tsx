@@ -4,10 +4,6 @@ export function HeroSection() {
   return (
     <section className="hero wrap" aria-labelledby="hero-title">
       <div className="hero-copy">
-        <p className="eyebrow">
-          <span className="small-rule"></span>Nigerian voices. Boundless
-          imagination.
-        </p>
         <h1 id="hero-title">
           OUR STORIES.
           <br />
@@ -18,16 +14,32 @@ export function HeroSection() {
           Starting in Nigeria. Made for the stories you can’t put down.
         </p>
         <div className="hero-actions">
-          <AudienceLink className="button" role="reader">
-            Find your next story <span aria-hidden="true">↗</span>
+          <AudienceLink className="button" role="creator">
+            Join as a creator
+            <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M5 15L15 5M5 5H15V15"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+            </svg>
           </AudienceLink>
-          <a className="text-action" href="#creators">
-            Bring your story <span aria-hidden="true">→</span>
-          </a>
+          <AudienceLink className="text-action" role="reader">
+            Join as a reader
+            <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M4 10H16M11 5L16 10L11 15"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+            </svg>
+          </AudienceLink>
         </div>
         <p className="release-note">
-          In development. Join the waitlist for updates and early testing
-          opportunities.
+          <strong>Joining does not submit your work.</strong>
+          <span>In development. Email registration is not active yet.</span>
         </p>
       </div>
       <figure className="hero-art hero-art--comic">

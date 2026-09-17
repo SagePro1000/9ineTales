@@ -83,7 +83,7 @@ async function runChecks(page) {
     const submit = document.querySelector('button[type="submit"]');
     return submit instanceof HTMLButtonElement && !submit.disabled;
   });
-  await page.locator('[data-role-target="creator"]').click();
+  await page.locator('[data-role-target="creator"]').first().click();
   assert.equal(
     await page.locator('input[name="role"]:checked').inputValue(),
     "creator",
@@ -116,7 +116,7 @@ async function runChecks(page) {
     true,
     "Audience CTA preserves consent",
   );
-  await page.locator('[data-role-target="creator"]').click();
+  await page.locator('[data-role-target="creator"]').first().click();
   assert.equal(
     await page.locator("#email").inputValue(),
     "preview@example.com",
