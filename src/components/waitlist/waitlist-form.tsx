@@ -11,19 +11,29 @@ const messages: Record<AudienceRole, string> = {
   both: "You would receive reader updates, early testing opportunities, and creator pilot information.",
 };
 
-export function WaitlistForm() {
+export function WaitlistForm({
+  collectionEnabled = false,
+}: {
+  collectionEnabled?: boolean;
+}) {
   const { resetVersion } = useWaitlist();
   // Only a completed preview is reset by an audience-specific CTA.
-  return <FormFields key={resetVersion} />;
+  return (
+    <FormFields key={resetVersion} collectionEnabled={collectionEnabled} />
+  );
 }
 
-function FormFields() {
+function FormFields({ collectionEnabled }: { collectionEnabled: boolean }) {
   const { role, setRole, setPreviewComplete } = useWaitlist();
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [consentError, setConsentError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [website, setWebsite] = useState("");
+  const submittingRef = useRef(false);
   const [submittedRole, setSubmittedRole] = useState<AudienceRole | null>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const consentRef = useRef<HTMLInputElement>(null);
@@ -37,9 +47,10 @@ function FormFields() {
     if (submittedRole) resultRef.current?.focus();
   }, [submittedRole]);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!ready) return;
+    if (!ready || submittingRef.current) return;
+    setSubmitError("");
     const trimmed = email.trim();
     const input = emailRef.current;
     if (!input) return;
@@ -62,10 +73,48 @@ function FormFields() {
       return;
     }
 
-    // Prototype only: no fetch, API call, mailing-list integration, or browser storage.
-    // Clear the email before showing the demonstration confirmation.
+    const signupRole = role;
+    if (collectionEnabled) {
+      submittingRef.current = true;
+      setSubmitting(true);
+      try {
+        const source = new URLSearchParams(window.location.search).get(
+          "utm_source",
+        );
+        const response = await fetch("/api/waitlist/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: trimmed,
+            role: signupRole,
+            consent,
+            website,
+            ...(source && /^[a-z0-9_-]{1,64}$/i.test(source) ? { source } : {}),
+          }),
+          signal: AbortSignal.timeout(30000),
+        });
+        const result = await response.json();
+        if (!response.ok || result.status !== "pending") {
+          setSubmitError(
+            typeof result.message === "string"
+              ? result.message
+              : "We couldn’t complete your signup. Please try again.",
+          );
+          return;
+        }
+      } catch {
+        setSubmitError(
+          "We couldn’t reach the signup service. Your details are still here. Check your connection and try again.",
+        );
+        return;
+      } finally {
+        submittingRef.current = false;
+        setSubmitting(false);
+      }
+    }
+    // The disabled mode remains a preview and never contacts the signup endpoint.
     setEmail("");
-    setSubmittedRole(role);
+    setSubmittedRole(signupRole);
     setPreviewComplete(true);
   }
 
@@ -76,6 +125,7 @@ function FormFields() {
     setConsent(false);
     setEmailError("");
     setConsentError("");
+    setSubmitError("");
     setRole("reader");
     requestAnimationFrame(() => emailRef.current?.focus());
   }
@@ -87,8 +137,9 @@ function FormFields() {
         noValidate
         hidden={submittedRole !== null}
         onSubmit={handleSubmit}
+        aria-busy={submitting}
       >
-        <fieldset>
+        <fieldset disabled={submitting}>
           <legend>I’m joining as a…</legend>
           <div className="role-options">
             {(["reader", "creator", "both"] as const).map((option) => (
@@ -116,6 +167,8 @@ function FormFields() {
           autoComplete="email"
           placeholder="you@example.com"
           required
+          maxLength={254}
+          disabled={submitting}
           value={email}
           onChange={(event) => {
             setEmail(event.target.value);
@@ -135,6 +188,7 @@ function FormFields() {
             type="checkbox"
             id="consent"
             required
+            disabled={submitting}
             checked={consent}
             onChange={(event) => {
               setConsent(event.target.checked);
@@ -151,20 +205,50 @@ function FormFields() {
         <p id="consent-error" className="field-error" aria-live="polite">
           {consentError}
         </p>
+        {collectionEnabled ? (
+          <div className="signup-bot-trap" aria-hidden="true">
+            <label htmlFor="signup-website">Leave this field empty</label>
+            <input
+              id="signup-website"
+              type="text"
+              value={website}
+              onChange={(event) => setWebsite(event.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
+        ) : null}
+        <p id="submit-error" className="field-error" role="alert">
+          {submitError}
+        </p>
         <button
           className="button signup-button"
           type="submit"
-          disabled={!ready}
+          disabled={!ready || submitting}
+          aria-describedby="form-note submit-error"
         >
-          Preview my signup <span aria-hidden="true">↗</span>
+          {submitting
+            ? "Requesting confirmation…"
+            : collectionEnabled
+              ? "Join the waitlist"
+              : "Preview my signup"}{" "}
+          <span aria-hidden="true">↗</span>
         </button>
         <p id="form-note" className="form-note">
-          Prototype only. Your email is not sent, saved, or added to a mailing
-          list.
+          {collectionEnabled ? (
+            <>
+              Confirm your email before receiving updates. Read our{" "}
+              <a href="/privacy/">waitlist privacy notice</a>.
+            </>
+          ) : (
+            "Prototype only. Your email is not sent, saved, or added to a mailing list."
+          )}
         </p>
         <noscript>
           <p className="form-note">
-            Enable JavaScript to try the signup preview.
+            {collectionEnabled
+              ? "Enable JavaScript to join the waitlist."
+              : "Enable JavaScript to try the signup preview."}
           </p>
         </noscript>
       </form>
@@ -178,15 +262,24 @@ function FormFields() {
         <span className="success-mark" aria-hidden="true">
           ✓
         </span>
-        <h3>Your first chapter starts here.</h3>
+        <h3>
+          {collectionEnabled
+            ? "Check your inbox to confirm."
+            : "Your first chapter starts here."}
+        </h3>
         <p id="signup-message">
-          {submittedRole ? messages[submittedRole] : ""}
+          {collectionEnabled
+            ? "For a new, eligible email address, we request a confirmation email. Click its link to join the waitlist, and check spam if it hasn’t arrived."
+            : submittedRole
+              ? messages[submittedRole]
+              : ""}
         </p>
         <p className="form-note">
-          This is the confirmation design. No signup was saved and no email will
-          be sent.
+          {collectionEnabled
+            ? "Already subscribed or previously unsubscribed? This form won’t change your existing preferences or subscription. Repeat requests may not send another email."
+            : "This is the confirmation design. No signup was saved and no email will be sent."}
         </p>
-        {submittedRole ? (
+        {submittedRole && !collectionEnabled ? (
           <details className="optional-question">
             <summary>One optional question</summary>
             <label className="field-label" htmlFor="format-interest">
@@ -208,7 +301,8 @@ function FormFields() {
           id="reset-signup"
           onClick={resetSignup}
         >
-          Try another signup <span aria-hidden="true">→</span>
+          {collectionEnabled ? "Use another email" : "Try another signup"}{" "}
+          <span aria-hidden="true">→</span>
         </button>
       </div>
     </>

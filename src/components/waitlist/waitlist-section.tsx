@@ -1,6 +1,10 @@
 import { WaitlistForm } from "./waitlist-form";
 
-export function WaitlistSection() {
+export function WaitlistSection({
+  collectionEnabled = false,
+}: {
+  collectionEnabled?: boolean;
+}) {
   return (
     <section
       className="waitlist-section"
@@ -23,7 +27,7 @@ export function WaitlistSection() {
           </p>
         </div>
         <div className="signup-panel">
-          <WaitlistForm />
+          <WaitlistForm collectionEnabled={collectionEnabled} />
         </div>
       </div>
     </section>

@@ -55,11 +55,17 @@ npm run export
 
 `export` builds static output in `out/` for the existing hosting manifest. After a static export, run a normal build before `npm run start`, or serve `out/` with a static server. Local separation does not update a previously published site.
 
-## Signup remains a demonstration
+## Email collection
 
-The form demonstrates audience selection, email validation, consent, confirmation, and reset. It does not send email, save addresses, call an API, or integrate a mailing list. The email clears on demonstration submission.
+The form stays in demonstration mode by default. A server-only signup endpoint,
+Brevo double opt-in integration, shared Redis request limits, and live loading,
+retry, and inbox-confirmation states are implemented but not activated.
 
-Before launching collection, implement server validation, consent records, spam protection, deduplication, email verification, unsubscribe, and an operator-specific privacy notice. See `docs/REVIEW-PLAN.md`. Static export requires a separate signup backend.
+Follow [email collection setup](docs/EMAIL-COLLECTION.md) and `.env.example` to
+configure the provider, privacy details, and production environment. Run
+`npm run test:waitlist` for provider-isolated backend checks. Collection requires
+explicit enablement and every required setting. Redeploy after changing settings.
+Static export always stays a preview and omits the signup API.
 
 ## Brand updates
 

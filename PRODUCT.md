@@ -52,9 +52,10 @@ required assets and tokens; neither should depend on the other at runtime.
 
 ## Capabilities and Constraints
 
-- The current signup is a demonstration: it validates form entries and displays
-  confirmation states, but does not send or save emails, create subscriptions, or
-  collect optional answers. Real email registration remains unimplemented.
+- The deployed signup is a demonstration. Brevo double opt-in collection and
+  shared Redis request limits are implemented locally but remain disabled until
+  provider credentials, sender/template, and operator privacy settings are ready.
+  Live mode does not collect the optional format question.
 - The reading platform and creator submission portal are not available in this app.
 - Publishing review, chapter releases, and a curated pilot describe the planned
   journey, not implemented services.

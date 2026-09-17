@@ -7,20 +7,22 @@ import { WaitlistSection } from "@/components/waitlist/waitlist-section";
 import { FaqSection } from "@/components/waitlist/faq-section";
 import { WaitlistProvider } from "@/components/waitlist/waitlist-context";
 import { SiteHeader, SiteFooter, SkipLink } from "@/components/site-shell";
+import { getWaitlistConfig } from "@/lib/waitlist/config";
 
 export default function HomePage() {
+  const collectionEnabled = getWaitlistConfig() !== null;
   return (
     <WaitlistProvider>
       <SkipLink />
       <SiteHeader />
       <main id="main">
-        <HeroSection />
+        <HeroSection collectionEnabled={collectionEnabled} />
         <StoryStrip />
         <ReaderSection />
         <CreatorSection />
         <ProcessSection />
-        <WaitlistSection />
-        <FaqSection />
+        <WaitlistSection collectionEnabled={collectionEnabled} />
+        <FaqSection collectionEnabled={collectionEnabled} />
       </main>
       <SiteFooter />
     </WaitlistProvider>

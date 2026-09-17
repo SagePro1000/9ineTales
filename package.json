@@ -8,6 +8,7 @@
     "start": "next start",
     "export": "node scripts/export.mjs",
     "typecheck": "tsc --noEmit",
+    "test:waitlist": "node --test scripts/waitlist.test.mjs",
     "format": "prettier --write src next.config.ts tsconfig.json package.json README.md",
     "verify": "node scripts/verify.mjs"
   },

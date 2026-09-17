@@ -1,6 +1,10 @@
 import { AudienceLink } from "./waitlist-context";
 
-export function HeroSection() {
+export function HeroSection({
+  collectionEnabled = false,
+}: {
+  collectionEnabled?: boolean;
+}) {
   return (
     <section className="hero wrap" aria-labelledby="hero-title">
       <div className="hero-copy">
@@ -39,7 +43,11 @@ export function HeroSection() {
         </div>
         <p className="release-note">
           <strong>Joining does not submit your work.</strong>
-          <span>In development. Email registration is not active yet.</span>
+          <span>
+            {collectionEnabled
+              ? "In development. Confirm your email to receive updates."
+              : "In development. Email registration is not active yet."}
+          </span>
         </p>
       </div>
       <figure className="hero-art hero-art--comic">

@@ -1,4 +1,8 @@
-export function FaqSection() {
+export function FaqSection({
+  collectionEnabled = false,
+}: {
+  collectionEnabled?: boolean;
+}) {
   return (
     <section
       className="faq-section wrap section-space"
@@ -18,8 +22,11 @@ export function FaqSection() {
         <details>
           <summary>Is 9inetales available to read now?</summary>
           <p>
-            The reading platform is in development. This page is a waitlist
-            design prototype. We have not announced a launch date.
+            The reading platform is in development.{" "}
+            {collectionEnabled
+              ? "This page collects interest ahead of onboarding."
+              : "This page is a waitlist design prototype."}{" "}
+            We have not announced a launch date.
           </p>
         </details>
         <details>

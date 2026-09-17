@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SiteHeader, SiteFooter, SkipLink } from "@/components/site-shell";
+import { getWaitlistConfig } from "@/lib/waitlist/config";
 
 export const metadata: Metadata = {
   title: "Waitlist privacy",
@@ -7,6 +8,99 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
+  const config = getWaitlistConfig();
+  if (config)
+    return (
+      <>
+        <SkipLink />
+        <SiteHeader mode="privacy" />
+        <main className="wrap section-space privacy-page" id="main">
+          <h1>Waitlist privacy.</h1>
+          <p className="privacy-intro">
+            {config.operator} manages the 9inetales waitlist. Contact{" "}
+            <a href={`mailto:${config.privacyEmail}`}>{config.privacyEmail}</a>{" "}
+            about your information or a deletion request.
+          </p>
+          <div className="privacy-sections">
+            <section aria-labelledby="privacy-form">
+              <h2 id="privacy-form">What we collect and why</h2>
+              <p>
+                When you request to join, we send your email address,
+                reader/creator/both preference, signup and consent times, and
+                consent wording version to Brevo. We also save a campaign source
+                when a valid utm_source is present; otherwise the source is
+                “website”. We use these details to manage the waitlist and send
+                the updates you requested.
+              </p>
+              <p>
+                Brevo handles email confirmation. Updates are limited to
+                confirmed contacts on the waitlist who remain subscribed and are
+                eligible to receive email. Joining as a creator expresses
+                interest; it does not submit work or agree to publishing or
+                payment terms.
+              </p>
+            </section>
+            <section aria-labelledby="privacy-providers">
+              <h2 id="privacy-providers">Services and spam protection</h2>
+              <p>
+                Vercel hosts the website and processes signup requests. Brevo
+                stores contact information, processes confirmation emails and
+                subscription events, and handles update delivery and unsubscribe
+                records. These services may process information outside your
+                country.
+              </p>
+              <p>
+                We use Upstash Redis for shared request limits and to protect
+                pending preferences. It holds keyed hashes of email addresses
+                and IP addresses, request counts, pending audience preferences,
+                source, consent times, and consent wording version. It does not
+                hold plaintext email addresses or IP addresses. These hashes are
+                pseudonymous identifiers, not anonymous data.
+              </p>
+              <p>
+                IP request counters expire after 10 minutes, daily counters
+                after two days, and email-attempt locks after 10 minutes.
+                Pending preference records expire 31 days after their most
+                recent successful confirmation request or existing-contact
+                check. An email confirmation link does not by itself authorize
+                additional tracking on this website.
+              </p>
+            </section>
+            <section aria-labelledby="privacy-retention">
+              <h2 id="privacy-retention">Retention and your choices</h2>
+              <p>{config.retention}</p>
+              <p>
+                You can browse without joining and unsubscribe using the link in
+                each update. Public repeat submissions do not change an existing
+                contact’s preferences or reverse an unsubscribe. Contact us to
+                request access, correction, or deletion, including deletion of
+                temporary spam-protection records. Brevo may retain delivery and
+                suppression records under its service policies; suppression
+                helps prevent further unwanted email.
+              </p>
+            </section>
+            <section aria-labelledby="privacy-tracking">
+              <h2 id="privacy-tracking">Website requests and tracking</h2>
+              <p>
+                The website itself does not store signup entries in cookies,
+                local storage, or session storage, and it does not use
+                advertising trackers or website analytics. Fonts and images are
+                served from this website. Your browser may offer autofill under
+                its own settings.
+              </p>
+              <p>
+                Vercel may receive IP addresses, browser details, requested
+                pages, and request times in hosting logs. Brevo records email
+                delivery and confirmation events. Provider logs and any enabled
+                email open or link tracking are handled under the providers’
+                policies and account settings.
+              </p>
+            </section>
+          </div>
+        </main>
+        <SiteFooter />
+      </>
+    );
   return (
     <>
       <SkipLink />

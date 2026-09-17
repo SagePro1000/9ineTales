@@ -10,6 +10,7 @@ const baseURL = (process.env.BASE_URL || "http://127.0.0.1:3000").replace(
   "",
 );
 const origin = new URL(baseURL).origin;
+const live = process.env.WAITLIST_TEST_MODE === "live";
 await mkdir(join(artifacts, "screenshots"), { recursive: true });
 const browser = await chromium.launch({
   headless: true,
@@ -28,9 +29,43 @@ async function runChecks(page) {
     failed = [],
     external = [],
     submissions = [];
+  let mockedSignups = 0;
+  if (live) {
+    // Live form tests must never reach Brevo or the actual signup endpoint.
+    await page.route(`${origin}/api/waitlist/`, async (route) => {
+      mockedSignups++;
+      const body = route.request().postDataJSON();
+      assert.equal(body.consent, true);
+      assert.equal(body.website, "");
+      if (mockedSignups === 1) {
+        await route.fulfill({
+          status: 503,
+          contentType: "application/json",
+          body: JSON.stringify({
+            message:
+              "Test outage. Your details are still here. Please try again.",
+          }),
+        });
+      } else {
+        await route.fulfill({
+          status: 202,
+          contentType: "application/json",
+          body: JSON.stringify({ status: "pending" }),
+        });
+      }
+    });
+  }
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("response", (response) => {
-    if (response.status() >= 400) failed.push(response.url());
+    if (
+      response.status() >= 400 &&
+      !(
+        live &&
+        response.url() === `${origin}/api/waitlist/` &&
+        response.status() === 503
+      )
+    )
+      failed.push(response.url());
   });
   page.on("request", (request) => {
     if (
@@ -143,8 +178,35 @@ async function runChecks(page) {
     "Modified audience click leaves the current form unchanged",
   );
   await page.locator('button[type="submit"]').click();
+  if (live) {
+    await page
+      .locator("#submit-error")
+      .filter({ hasText: "Test outage" })
+      .waitFor();
+    assert.equal(await page.locator("#signup-result").isVisible(), false);
+    assert.equal(
+      await page.locator("#email").inputValue(),
+      "preview@example.com",
+    );
+    assert.equal(await page.locator("#consent").isChecked(), true);
+    assert.equal(
+      await page.locator('input[name="role"]:checked').inputValue(),
+      "creator",
+    );
+    await page.locator('button[type="submit"]').click();
+  }
+  await page.locator("#signup-result").waitFor();
   assert.equal(await page.locator("#signup-result").isVisible(), true);
-  assert.match(await page.locator("#signup-message").textContent(), /creator/);
+  assert.match(
+    await page.locator("#signup-message").textContent(),
+    live ? /confirmation email/ : /creator/,
+  );
+  if (live)
+    assert.equal(
+      await page.locator("#format-interest").count(),
+      0,
+      "Live signup does not collect prototype-only answers",
+    );
   assert.equal(await page.locator("#email").inputValue(), "");
   await page
     .locator("#signup-result")
@@ -159,6 +221,7 @@ async function runChecks(page) {
   await page.locator("#email").fill("reset@example.com");
   await page.locator("#consent").check();
   await page.locator('button[type="submit"]').click();
+  await page.locator("#signup-result").waitFor();
   await page.locator("#reset-signup").click();
   assert.equal(await page.locator("#waitlist-form").isVisible(), true);
   await page.locator('[data-role-target="reader"]').first().click();
@@ -234,7 +297,17 @@ async function runChecks(page) {
   assert.equal(errors.length, 0, "Browser JavaScript errors");
   assert.equal(failed.length, 0, "Broken routes or assets");
   assert.equal(external.length, 0, "Unexpected external requests");
-  assert.equal(submissions.length, 0, "Demo form sends no submissions");
+  if (live) {
+    assert.equal(mockedSignups, 3);
+    assert.equal(submissions.length, 3);
+    assert.ok(
+      submissions.every(
+        (request) =>
+          request.method === "POST" &&
+          request.url === `${origin}/api/waitlist/`,
+      ),
+    );
+  } else assert.equal(submissions.length, 0, "Demo form sends no submissions");
   assert.equal(
     findings.filter((f) => f.scroll > f.viewport + 2).length,
     0,
