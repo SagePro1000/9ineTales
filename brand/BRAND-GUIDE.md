@@ -73,7 +73,7 @@ Use licensed or commissioned creator covers, panels, and excerpts with credits a
 
 Use references grounded in the particular story, rather than generic continent-wide symbols. Do not suggest representation of a named deity without story context and research.
 
-The generated hero is atmosphere-setting concept art only; the page labels it explicitly. It is not creator work or a real published series. Keep concept-art-original.png and the generation prompt for provenance. Prefer permissioned participating-creator artwork for launch.
+The current hero and imagery sample use supplied comic splash artwork, credited to @mohammedawwall from the supplied filename. It is a visual reference, not a confirmed 9inetales catalogue title or partnership. The full composition is preserved in the waitlist. Prefer commissioned or licensed participating-creator artwork with agreed credits for launch. The earlier AI concept and its generation prompt remain archived for provenance; they are no longer used in the active pages.
 
 ## Voice and claims
 

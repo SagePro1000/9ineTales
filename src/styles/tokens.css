@@ -1,0 +1,22 @@
+:root {
+  --orange: #ff5a1f;
+  --orange-dark: #c44012;
+  --ink: #211a17;
+  --paper: #fff8f0;
+  --white: #ffffff;
+  --muted: #6b5e57;
+  --line: #cfbeb0;
+  --tint: #f6e7d7;
+  --error: #a52a24;
+  --success: #236343;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "Source Sans 3", Arial, sans-serif;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --radius: 2px;
+}

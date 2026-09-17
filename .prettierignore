@@ -1,0 +1,7 @@
+node_modules/
+.next/
+out/
+.artifacts/
+legacy/
+public/
+package-lock.json

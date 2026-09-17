@@ -7,7 +7,7 @@ from PIL import Image
 import json, shutil
 
 root = Path(__file__).resolve().parents[1]
-assets = root / 'dist/assets'
+assets = root / 'public/assets'
 logos = assets / 'logos'
 font = TTFont(assets / 'fonts/font-1.ttf')
 glyphs = font.getGlyphSet()
@@ -63,10 +63,8 @@ for name, a, b, fill, glyph in [
     content += lettering('TALES', 310, 79, 236, 54, b)
     (logos / (name + '.svg')).write_text(svg('0 0 560 118', content, '9inetales horizontal logo'))
 
-source = Path('/Users/user/.codex/generated_images/01a0af39-9711-7182-a6f2-721fac9000d5/exec-165c757e-613c-4539-8e0f-fc6a5af90922.png')
-shutil.copy2(source, root / 'brand/concept-art-original.png')
-im = Image.open(source)
-im.save(assets / 'concept-art.webp', 'WEBP', quality=86, method=6)
+# The current hero is public/assets/hero-comic-splash.jpeg, supplied by the founder.
+# Preserve it unchanged; the earlier AI concept remains archived in brand/.
 
 # Serve compact fonts while retaining the licensed original TTFs in the brand kit.
 css = (assets / 'fonts/fonts.css').read_text()
@@ -84,4 +82,4 @@ for path in sorted((assets / 'fonts').glob('*.ttf')):
     'typography': {'display': 'Barlow Condensed', 'body': 'Source Sans 3'},
     'spacing': [4,8,12,16,24,32,48,64,96], 'radius': 2,
 }, indent=2) + '\n')
-print('Saved 9 outlined SVG logos, compact fonts, concept art, and design tokens.')
+print('Saved 9 outlined SVG logos, compact fonts, and design tokens; supplied hero preserved.')
