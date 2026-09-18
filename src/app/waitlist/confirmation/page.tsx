@@ -14,12 +14,12 @@ export default function ConfirmationPage() {
       <main className="wrap section-space privacy-page" id="main">
         <h1>Thank you for confirming.</h1>
         <p className="privacy-intro">
-          If you arrived here through a valid Brevo confirmation link, your
-          email subscription has been confirmed.
+          Thank you for your interest in 9inetales. We look forward to sharing
+          our progress with you.
         </p>
         <p>
-          Opening this page directly does not create or verify a signup. You can
-          unsubscribe from updates using the link in each email.
+          Confirming your email through the link in your inbox completes your
+          signup. You can unsubscribe at any time using the link in each email.
         </p>
         <a className="text-action" href="/">
           Return to 9inetales <span aria-hidden="true">→</span>

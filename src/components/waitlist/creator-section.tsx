@@ -23,7 +23,15 @@ export function CreatorSection() {
             publish and grow an audience.
           </p>
           <AudienceLink className="button" role="creator">
-            Join as a creator <span aria-hidden="true">↗</span>
+            Join as a creator
+            <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M5 15L15 5M5 5H15V15"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+            </svg>
           </AudienceLink>
         </div>
         <div className="creator-details">
